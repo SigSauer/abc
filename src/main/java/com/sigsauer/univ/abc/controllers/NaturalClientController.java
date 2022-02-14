@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@CrossOrigin(origins = {"http://localhost:8081", "http://192.168.1.112:8081/" },
+@CrossOrigin(origins = {"http://localhost:8080", "https://web-abc-development.herokuapp.com/" },
         methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.PATCH},
         allowedHeaders = "*",
         maxAge = 3600)
