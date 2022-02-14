@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@CrossOrigin(origins = {"http://localhost:8080", "https://web-abc-development.herokuapp.com/" },
-        methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.PATCH},
+@CrossOrigin(origins = {"http://localhost:8080", "https://web-abc-development.herokuapp.com" },
+        methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS},
         allowedHeaders = "*",
         maxAge = 3600)
 @RestController

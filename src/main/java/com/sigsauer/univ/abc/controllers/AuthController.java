@@ -20,8 +20,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = {"http://localhost:8080", "https://web-abc-development.herokuapp.com/" },
-		methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT},
+@CrossOrigin(origins = {"http://localhost:8080", "https://web-abc-development.herokuapp.com" },
+		methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS},
 		allowedHeaders = "*",
 		maxAge = 3600)
 @RestController
