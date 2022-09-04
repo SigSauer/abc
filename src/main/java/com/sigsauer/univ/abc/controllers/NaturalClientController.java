@@ -1,10 +1,17 @@
 package com.sigsauer.univ.abc.controllers;
 
 import com.sigsauer.univ.abc.models.clients.NaturalClient;
+import com.sigsauer.univ.abc.models.communication.Email;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientAlreadyExistException;
+import com.sigsauer.univ.abc.models.exceptions.NaturalClientInvalidTin;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientIsBlockedException;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientNotFoundException;
+import com.sigsauer.univ.abc.models.users.User;
+import com.sigsauer.univ.abc.payload.request.EmailRequest;
+import com.sigsauer.univ.abc.security.services.UserService;
+import com.sigsauer.univ.abc.service.EmailService;
 import com.sigsauer.univ.abc.service.NaturalClientService;
+import com.sigsauer.univ.abc.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +30,7 @@ import java.util.stream.Collectors;
         allowedHeaders = "*",
         maxAge = 3600)
 @RestController
-@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'RISK', 'COLLECTOR')")
 @RequestMapping("/api/clients/natural")
 public class NaturalClientController {
 
@@ -31,6 +38,15 @@ public class NaturalClientController {
 
     @Autowired
     NaturalClientService ncService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    ProductService productService;
 
     //Natural client's REST
 
@@ -100,6 +116,32 @@ public class NaturalClientController {
         return ResponseEntity.badRequest().body(message);
     }
 }
+
+    @PostMapping("{id}/send")
+    ResponseEntity sendEmail(@PathVariable Long id, @RequestBody EmailRequest emailRequest) {
+        log.info("IN NaturalClientController POST EMAIL request by id={}", id);
+        NaturalClient nc = ncService.findById(id);
+        User sender = userService.getOne(emailRequest.getUserId());
+        Email email = new Email(sender, nc, emailRequest.getSubject(), emailRequest.getBody());
+        log.info("Email to send: {}", emailRequest);
+        //send email
+        return emailService.sendEmail(email)
+                ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("{id}/emails")
+    ResponseEntity getEmails(@PathVariable Long id) {
+        log.info("getEmails() by ID = {}", id);
+        return ResponseEntity.ok(emailService.getEmailsByClientId(id));
+    }
+
+    @GetMapping("{id}/products")
+    ResponseEntity getProducts(@PathVariable Long id) {
+        log.info("getProducts() by ID = {}", id);
+        return ResponseEntity.ok(productService.getProductsByClientId(id));
+    }
+
+
 
 
 }

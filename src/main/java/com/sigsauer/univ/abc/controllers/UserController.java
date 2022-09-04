@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody UserRequest user) {
-        log.info("IN UserController POST request");
+        log.info("IN UserController POST request: {}", Arrays.toString(user.getArrayRoles()));
         try {
             User result = userService.add(user.toUser());
             result = userService.updateRoles(result.getId(),user.getArrayRoles());
@@ -86,7 +87,7 @@ public class UserController {
 
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'RISK', 'COLLECTOR')")
     @PatchMapping("{id}")
     public ResponseEntity updatePassword(@PathVariable Long id, @RequestBody LoginRequest loginRequest) {
         log.info("IN UserController PATCH request");

@@ -67,9 +67,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
 			Set<Role> roles = new HashSet<>();
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(userRole);
+//			roles.add(userRole);
 			user.setPassword(encoder.encode(user.getUsername()));
-			user.setRoles(roles);
+//			user.setRoles(roles);
 			user = userRepository.save(user);
 			return user;
 		}

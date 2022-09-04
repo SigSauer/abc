@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
         allowedHeaders = "*",
         maxAge = 3600)
 @RestController
-@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'RISK', 'COLLECTOR')")
 @RequestMapping("/api/clients/legal")
 public class LegalClientController {
 

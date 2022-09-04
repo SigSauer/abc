@@ -2,10 +2,12 @@ package com.sigsauer.univ.abc.service.impl;
 
 import com.sigsauer.univ.abc.models.clients.NaturalClient;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientAlreadyExistException;
+import com.sigsauer.univ.abc.models.exceptions.NaturalClientInvalidTin;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientIsBlockedException;
 import com.sigsauer.univ.abc.models.exceptions.NaturalClientNotFoundException;
 import com.sigsauer.univ.abc.repository.NaturalClientRepository;
 import com.sigsauer.univ.abc.service.NaturalClientService;
+import com.sigsauer.univ.abc.service.utils.TinValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,8 @@ public class NaturalClientServiceImpl implements NaturalClientService {
             throw new NaturalClientAlreadyExistException("tin",nc.getTin());
         else if(ncRepository.existsByDocNumber(nc.getDocNumber()))
             throw new NaturalClientAlreadyExistException("docNumber",nc.getDocNumber());
+        else if(!isValid(nc))
+            throw new NaturalClientInvalidTin(nc.getTin(), nc.getDob().toString(), nc.getSex());
         else {
             nc.setActive(true);
             return ncRepository.save(nc);
@@ -56,6 +60,8 @@ public class NaturalClientServiceImpl implements NaturalClientService {
             throw new NaturalClientAlreadyExistException("tin",nc.getTin());
         else if(!old.getDocNumber().equals(nc.getDocNumber()) && ncRepository.existsByDocNumber(nc.getDocNumber()))
             throw new NaturalClientAlreadyExistException("docNumber",nc.getDocNumber());
+        else if(!isValid(nc))
+            throw new NaturalClientInvalidTin(nc.getTin(), nc.getDob().toString(), nc.getSex());
         else {
             nc.setId(old.getId());
             nc.setActive(true);
@@ -68,6 +74,10 @@ public class NaturalClientServiceImpl implements NaturalClientService {
         NaturalClient nc = findById(id);
         nc.setActive(false);
         return ncRepository.save(nc);
+    }
+
+    private boolean isValid(NaturalClient nc) {
+        return TinValidator.validate(nc.getTin(), nc.getDob().toString(), nc.getSex());
     }
 
 }
